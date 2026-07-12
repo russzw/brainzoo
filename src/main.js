@@ -12,15 +12,15 @@ import { createBrain } from "./brain.js";
 // ---------------------------------------------------------------------------
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0b0e16);
-scene.fog = new THREE.Fog(0x0b0e16, 30, 80);
+scene.fog = new THREE.Fog(0x0b0e16, 40, 150);
 
 const camera = new THREE.PerspectiveCamera(
   50,
   window.innerWidth / window.innerHeight,
   0.1,
-  200
+  400
 );
-camera.position.set(0, 7, 24);
+camera.position.set(0, 14, 38);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -42,7 +42,7 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.06;
 controls.target.set(0, 1.6, 0);
 controls.minDistance = 6;
-controls.maxDistance = 60;
+controls.maxDistance = 120;
 controls.maxPolarAngle = Math.PI * 0.495;
 
 // ---------------------------------------------------------------------------
@@ -69,14 +69,14 @@ scene.add(fill);
 // Floor + pedestals
 // ---------------------------------------------------------------------------
 const floor = new THREE.Mesh(
-  new THREE.CircleGeometry(40, 64),
+  new THREE.CircleGeometry(70, 80),
   new THREE.MeshStandardMaterial({ color: 0x0e1320, roughness: 1, metalness: 0 })
 );
 floor.rotation.x = -Math.PI / 2;
 floor.position.y = -0.5;
 scene.add(floor);
 
-let grid = new THREE.PolarGridHelper(34, 16, 8, 64, 0x223049, 0x18202f);
+let grid = new THREE.PolarGridHelper(56, 24, 10, 96, 0x223049, 0x18202f);
 grid.position.y = -0.49;
 scene.add(grid);
 
@@ -90,14 +90,25 @@ const pedestalMat = new THREE.MeshStandardMaterial({
 // Build brains, lay them out on an arc
 // ---------------------------------------------------------------------------
 const brainGroups = [];
-const ARC_RADIUS = 15;
-const ARC_SPAN = Math.PI * (150 / 180);
-const startAngle = -ARC_SPAN / 2 - Math.PI / 2; // begin at back-left
 const BASE_FACTOR = 1.0; // human brain displayed at scale 1.0
 const NORM_DISPLAY = 0.95; // normalized mode: all brains same display size
+const BRAIN_DETAIL = species.length > 24 ? 4 : 5; // trim mesh density for big sets
+
+// phyllotaxis "spiral garden" — scales to any number of animals without crowding
+const GOLDEN = Math.PI * (3 - Math.sqrt(5));
+const SPIRAL_SPACING = 2.8;
+function layoutPosition(i) {
+  const r = SPIRAL_SPACING * Math.sqrt(i + 0.5);
+  const a = i * GOLDEN;
+  return { x: Math.cos(a) * r, z: Math.sin(a) * r };
+}
 
 species.forEach((item) => {
-  const group = createBrain({ color: item.color, seed: item.id });
+  const group = createBrain({
+    color: item.color,
+    seed: item.id,
+    detail: BRAIN_DETAIL,
+  });
   group.userData.item = item;
   scene.add(group);
 
@@ -167,9 +178,9 @@ function formatMetric(item, m) {
 function computeTargets() {
   const n = currentOrder.length;
   currentOrder.forEach((rec, i) => {
-    const angle = startAngle + (i / (n - 1)) * ARC_SPAN;
-    rec.targetX = Math.cos(angle) * ARC_RADIUS;
-    rec.targetZ = Math.sin(angle) * ARC_RADIUS;
+    const { x, z } = layoutPosition(i);
+    rec.targetX = x;
+    rec.targetZ = z;
 
     const val = metricValue(rec.item, metric);
     const ref = metricRef(metric);
@@ -437,8 +448,8 @@ const THEMES = {
   night: {
     bg: 0x0b0e16,
     fog: 0x0b0e16,
-    fogNear: 30,
-    fogFar: 80,
+    fogNear: 40,
+    fogFar: 150,
     floor: 0x0e1320,
     grid: [0x223049, 0x18202f],
     hemiSky: 0xbcd0ff,
@@ -453,8 +464,8 @@ const THEMES = {
   day: {
     bg: 0xb9cee6,
     fog: 0xb9cee6,
-    fogNear: 45,
-    fogFar: 130,
+    fogNear: 50,
+    fogFar: 160,
     floor: 0xc4d2e2,
     grid: [0x7e93b0, 0x9fb1c9],
     hemiSky: 0xffffff,

@@ -42,8 +42,8 @@ function ridged(noise, x, y, z, octaves, freq, lac, gain) {
   return sum;
 }
 
-function makeCerebrum(noise, baseColor) {
-  const geo = new THREE.IcosahedronGeometry(1, 5);
+function makeCerebrum(noise, baseColor, detail = 5) {
+  const geo = new THREE.IcosahedronGeometry(1, detail);
   const pos = geo.attributes.position;
   const count = pos.count;
 
@@ -105,8 +105,8 @@ function makeCerebrum(noise, baseColor) {
   return mesh;
 }
 
-function makeCerebellum(noise, baseColor) {
-  const geo = new THREE.IcosahedronGeometry(0.42, 4);
+function makeCerebellum(noise, baseColor, detail = 4) {
+  const geo = new THREE.IcosahedronGeometry(0.42, detail);
   const pos = geo.attributes.position;
   const count = pos.count;
   for (let i = 0; i < count; i++) {
@@ -143,13 +143,13 @@ function makeBrainStem(baseColor) {
 }
 
 // Returns a Group containing cerebrum + cerebellum + brain stem.
-export function createBrain({ color = 0xff6b6b, seed = "brain" } = {}) {
+export function createBrain({ color = 0xff6b6b, seed = "brain", detail = 5 } = {}) {
   const group = new THREE.Group();
   const rand = mulberry32(hashString(seed));
   const noise3D = createNoise3D(rand);
 
-  group.add(makeCerebrum(noise3D, color));
-  group.add(makeCerebellum(noise3D, color));
+  group.add(makeCerebrum(noise3D, color, detail));
+  group.add(makeCerebellum(noise3D, color, detail - 1));
   group.add(makeBrainStem(color));
 
   group.userData.isBrain = true;
