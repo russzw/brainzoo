@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brain Zoo — compare brain sizes across species</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header id="hud-top">
+        <h1>Brain&nbsp;Zoo</h1>
+        <p>An interactive 3D comparison of brain sizes across the animal kingdom.</p>
+      </header>
+
+      <div id="controls">
+        <div class="seg-title">Scale brains by</div>
+        <div class="seg" id="metric-seg">
+          <button data-m="mass" class="ctl active">Brain Mass</button>
+          <button data-m="neurons" class="ctl">Neurons</button>
+          <button data-m="eq" class="ctl">E.Q.</button>
+          <button data-m="ratio" class="ctl">Brain∶Body</button>
+        </div>
+        <button id="view-btn" class="ctl active">View: True&nbsp;Scale</button>
+        <button id="sort-btn" class="ctl">Sort&nbsp;↑ smallest→largest</button>
+        <button id="tour-btn" class="ctl">▶ Play&nbsp;Tour</button>
+        <button id="labels-btn" class="ctl active">Labels: On</button>
+        <button id="rotate-btn" class="ctl">Auto‑rotate: Off</button>
+        <button id="theme-btn" class="ctl">☾ Night</button>
+        <button id="about-btn" class="ctl">About</button>
+        <input id="search" class="ctl" type="text" placeholder="Search species…" autocomplete="off" />
+      </div>
+
+      <div id="legend"></div>
+
+      <aside id="panel" class="hidden">
+        <button id="panel-close" aria-label="close">×</button>
+        <div id="panel-swatch"></div>
+        <h2 id="panel-name"></h2>
+        <div id="panel-sci"></div>
+        <dl id="panel-stats"></dl>
+        <p id="panel-fact"></p>
+      </aside>
+
+      <footer id="hud-bottom">
+        Drag to orbit · scroll to zoom · click a brain to inspect
+      </footer>
+
+      <div id="about" class="modal hidden">
+        <div class="modal-card">
+          <button id="about-close" aria-label="close">×</button>
+          <h2>Brain&nbsp;Zoo</h2>
+          <p class="tag">An interactive 3D comparison of brain sizes across the animal kingdom.</p>
+          <p>
+            Every brain on the turntable is a procedurally generated 3D model,
+            scaled in real time by the metric you pick — absolute brain mass,
+            neuron count, encephalization quotient, or brain-to-body ratio.
+            Switch metrics and watch the brains reshape and re-rank, revealing
+            the twist that <em>bigger isn't always smarter</em>.
+          </p>
+          <p>
+            Built with Three.js + Vite. Geometry is generated from layered
+            ridged noise (no external models), and all data lives in one
+            editable file.
+          </p>
+          <p class="src">
+            Data sources: comparative neuroanatomy tables (brain &amp; body
+            masses) and Jerison's encephalization-quotient literature. Neuron
+            counts and EQ are representative, rounded figures.
+          </p>
+          <a
+            class="gh"
+            href="https://github.com/russzw/brainzoo"
+            target="_blank"
+            rel="noopener noreferrer"
+            >View on GitHub ↗</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
